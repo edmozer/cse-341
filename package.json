@@ -1,0 +1,22 @@
+{
+  "name": "cse341-books",
+  "version": "1.0.0",
+  "description": "Books web service for CSE 341",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node --env-file=.env server.js",
+    "dev": "nodemon --env-file=.env server.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "mongodb": "^6.18.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.34.0",
+    "nodemon": "^3.1.10"
+  }
+}
