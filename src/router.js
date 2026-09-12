@@ -7,8 +7,11 @@ import {
   updateAuthorHandler
 } from './controllers/authors.js';
 import {
+  createBookHandler,
+  deleteBookHandler,
   getBookByIdHandler,
-  getBooksHandler
+  getBooksHandler,
+  updateBookHandler
 } from './controllers/books.js';
 
 const router = express.Router();
@@ -20,5 +23,8 @@ router.put('/authors/:id', updateAuthorHandler);
 router.delete('/authors/:id', deleteAuthorHandler);
 router.get('/books', getBooksHandler);
 router.get('/books/:id', getBookByIdHandler);
+router.post('/books', createBookHandler);
+router.put('/books/:id', updateBookHandler);
+router.delete('/books/:id', deleteBookHandler);
 
 export default router;

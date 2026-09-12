@@ -25,6 +25,7 @@ The API stores books and authors in MongoDB. Books reference authors through
 The application requires a MongoDB database named `cse341-books-db` with `books` and `authors` collections. Book documents contain `id`, `authorId`, `title`, and `publicationDate`. Author documents contain `id`, `name`, and `birthYear`.
 
 Use `npm run seed:authors` to create the starter authors `a1`, `a2`, and `a3`.
+Use `npm run seed:books` to create starter books `b1`, `b2`, and `b3` with valid author references.
 
 ## Checks
 
