@@ -28,7 +28,7 @@ const seedBooks = async () => {
   for (const book of books) {
     await booksCollection.updateOne(
       { id: book.id },
-      { $set: book },
+      { $set: book, $unset: { author: '' } },
       { upsert: true }
     );
   }
