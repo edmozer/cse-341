@@ -15,7 +15,7 @@ const createBook = async (book) => {
 const updateBook = async (bookId, book) => {
   return getDb().collection('books').updateOne(
     { id: bookId },
-    { $set: book }
+    { $set: book, $unset: { author: '' } }
   );
 };
 
