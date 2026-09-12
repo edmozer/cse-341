@@ -1,11 +1,19 @@
 # CSE 341 Books Web Service
 
-Books API created for the W01 assignment.
+Books API created for the CSE 341 Week 02 assignment.
+
+The API stores books and authors in MongoDB. Books reference authors through
+`authorId`.
 
 ## Routes
 
 - `GET /books`: returns all books.
 - `GET /books/:id`: returns one book, `404` when it does not exist.
+- `GET /authors`: returns all authors.
+- `GET /authors/:id`: returns one author, `404` when it does not exist.
+- `POST /authors`: creates an author.
+- `PUT /authors/:id`: replaces an author.
+- `DELETE /authors/:id`: deletes an unreferenced author.
 
 ## Local setup
 
@@ -14,7 +22,9 @@ Books API created for the W01 assignment.
 3. Add the MongoDB connection values to `.env`.
 4. Run `npm run dev`.
 
-The application requires a MongoDB database named `cse341-books-db` with a `books` collection. Each document must contain `id`, `author`, `title`, and `publicationDate`.
+The application requires a MongoDB database named `cse341-books-db` with `books` and `authors` collections. Book documents contain `id`, `authorId`, `title`, and `publicationDate`. Author documents contain `id`, `name`, and `birthYear`.
+
+Use `npm run seed:authors` to create the starter authors `a1`, `a2`, and `a3`.
 
 ## Checks
 
