@@ -9,13 +9,15 @@
     "dev": "nodemon --env-file=.env server.js",
     "seed:books": "node --env-file=.env src/db/seed-books.js",
     "seed:authors": "node --env-file=.env src/db/seed-authors.js",
+    "swagger": "node --env-file=.env src/validate-swagger.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "node --test"
   },
   "dependencies": {
     "express": "^5.1.0",
-    "mongodb": "^6.18.0"
+    "mongodb": "^6.18.0",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "eslint": "^9.34.0",
