@@ -9,6 +9,9 @@ The API stores books and authors in MongoDB. Books reference authors through
 
 - `GET /books`: returns all books.
 - `GET /books/:id`: returns one book, `404` when it does not exist.
+- `POST /books`: creates a book with an existing author reference.
+- `PUT /books/:id`: replaces a book.
+- `DELETE /books/:id`: deletes a book.
 - `GET /authors`: returns all authors.
 - `GET /authors/:id`: returns one author, `404` when it does not exist.
 - `POST /authors`: creates an author.
@@ -26,6 +29,8 @@ The application requires a MongoDB database named `cse341-books-db` with `books`
 
 Use `npm run seed:authors` to create the starter authors `a1`, `a2`, and `a3`.
 Use `npm run seed:books` to create starter books `b1`, `b2`, and `b3` with valid author references.
+
+OpenAPI documentation is available at `/api-docs`. Run `npm run swagger` to verify that all ten API routes are documented.
 
 ## Checks
 
