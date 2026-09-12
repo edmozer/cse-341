@@ -90,12 +90,12 @@ const updateBookHandler = async (req, res) => {
   }
 
   try {
-    if (!(await authorExists(req.body.authorId))) {
-      return res.status(400).json({ message: 'Referenced author does not exist' });
-    }
-
     if (!(await getBookById(req.params.id))) {
       return res.status(404).json({ message: 'Book not found' });
+    }
+
+    if (!(await authorExists(req.body.authorId))) {
+      return res.status(400).json({ message: 'Referenced author does not exist' });
     }
 
     await updateBook(req.params.id, req.body);
