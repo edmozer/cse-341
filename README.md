@@ -5,6 +5,20 @@ Books API created for the CSE 341 Week 02 assignment.
 The API stores books and authors in MongoDB. Books reference authors through
 `authorId`.
 
+## Authentication
+
+Sessions authenticate users through an HTTP-only cookie. Passwords are stored
+as bcrypt hashes, and only `id`, `name`, and `role` are stored in the session.
+
+- `POST /auth/register`: creates a regular user from `name`, `email`, and `password`.
+- `POST /auth/login`: starts a session from `email` and `password`.
+- `POST /auth/logout`: destroys the current session.
+- `GET /auth/me`: returns the authenticated session user.
+- `GET /admin/dashboard`: returns the user list for admins only.
+
+All author and book write operations require an authenticated admin. Missing
+credentials return `401`; a logged-in non-admin receives `403`.
+
 ## Routes
 
 - `GET /books`: returns all books.
@@ -30,7 +44,10 @@ The application requires a MongoDB database named `cse341-books-db` with `books`
 Use `npm run seed:authors` to create the starter authors `a1`, `a2`, and `a3`.
 Use `npm run seed:books` to create starter books `b1`, `b2`, and `b3` with valid author references.
 
-OpenAPI documentation is available at `/api-docs`. Run `npm run swagger` to verify that all ten API routes are documented.
+Set `SESSION_SECRET`, `ADMIN_PASSWORD`, and `USER_PASSWORD` in `.env`, then run
+`npm run seed:users` to create the initial admin and regular user.
+
+OpenAPI documentation is available at `/api-docs`. Run `npm run swagger` to verify that all 15 API routes are documented.
 
 ## Checks
 
