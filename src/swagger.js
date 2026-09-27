@@ -45,6 +45,53 @@ const openapiDocument = {
   },
   servers: [{ url: '/' }],
   paths: {
+    '/auth/register': {
+      post: {
+        summary: 'Register a regular user',
+        requestBody: jsonBody('Credentials'),
+        responses: {
+          201: response('User registered', 'User'),
+          400: errorResponse('Invalid registration data'),
+          409: errorResponse('Email already registered')
+        }
+      }
+    },
+    '/auth/login': {
+      post: {
+        summary: 'Start a session',
+        requestBody: jsonBody('Credentials'),
+        responses: {
+          200: response('Session started', 'User'),
+          400: errorResponse('Invalid credentials'),
+          401: errorResponse('Invalid email or password')
+        }
+      }
+    },
+    '/auth/logout': {
+      post: {
+        summary: 'Destroy the current session',
+        responses: { 204: response('Session destroyed') }
+      }
+    },
+    '/auth/me': {
+      get: {
+        summary: 'Get the current session user',
+        responses: {
+          200: response('Authenticated user', 'User'),
+          401: errorResponse('Authentication required')
+        }
+      }
+    },
+    '/admin/dashboard': {
+      get: {
+        summary: 'List users for administrators',
+        responses: {
+          200: response('Admin dashboard returned'),
+          401: errorResponse('Authentication required'),
+          403: errorResponse('Insufficient permissions')
+        }
+      }
+    },
     '/authors': {
       get: {
         summary: 'List authors',
@@ -147,6 +194,25 @@ const openapiDocument = {
   },
   components: {
     schemas: {
+      Credentials: {
+        type: 'object',
+        required: ['email', 'password'],
+        properties: {
+          name: { type: 'string', example: 'Demo User' },
+          email: { type: 'string', format: 'email', example: 'user@example.com' },
+          password: { type: 'string', format: 'password', example: 'strong-password' }
+        }
+      },
+      User: {
+        type: 'object',
+        required: ['id', 'name', 'email', 'role'],
+        properties: {
+          id: { type: 'string', example: 'user-1' },
+          name: { type: 'string', example: 'Demo User' },
+          email: { type: 'string', example: 'user@example.com' },
+          role: { type: 'string', enum: ['user', 'admin'], example: 'user' }
+        }
+      },
       Author: {
         type: 'object',
         required: ['id', 'name', 'birthYear'],

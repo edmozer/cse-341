@@ -9,13 +9,16 @@
     "dev": "nodemon --env-file=.env server.js",
     "seed:books": "node --env-file=.env src/db/seed-books.js",
     "seed:authors": "node --env-file=.env src/db/seed-authors.js",
+    "seed:users": "node --env-file=.env src/db/seed-users.js",
     "swagger": "node --env-file=.env src/validate-swagger.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "node --test"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "express": "^5.1.0",
+    "express-session": "^1.19.0",
     "mongodb": "^6.18.0",
     "swagger-ui-express": "^5.0.1"
   },

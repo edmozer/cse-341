@@ -5,8 +5,8 @@ const routeCount = Object.values(openapiDocument.paths).reduce(
   0
 );
 
-if (routeCount !== 10) {
-  throw new Error(`Expected 10 documented routes, found ${routeCount}.`);
+if (routeCount !== 15) {
+  throw new Error(`Expected 15 documented routes, found ${routeCount}.`);
 }
 
 console.log(`Swagger document is valid with ${routeCount} routes.`);
