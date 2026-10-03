@@ -1,7 +1,21 @@
 import { getDb } from '../db/connect.js';
 
-const getAllBooks = async () => {
-  return getDb().collection('books').find({}).sort({ id: 1 }).toArray();
+const getBooks = async (
+  { filter, page, limit, sort, order },
+  booksCollection = getDb().collection('books')
+) => {
+  const sortDirection = order === 'desc' ? -1 : 1;
+  const [books, totalItems] = await Promise.all([
+    booksCollection
+      .find(filter)
+      .sort({ [sort]: sortDirection })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .toArray(),
+    booksCollection.countDocuments(filter)
+  ]);
+
+  return { books, totalItems };
 };
 
 const getBookById = async (bookId) => {
@@ -26,7 +40,7 @@ const deleteBook = async (bookId) => {
 export {
   createBook,
   deleteBook,
-  getAllBooks,
+  getBooks,
   getBookById,
   updateBook
 };

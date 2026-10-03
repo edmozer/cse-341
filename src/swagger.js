@@ -98,8 +98,15 @@ const openapiDocument = {
     '/books': {
       get: {
         summary: 'List books',
+        parameters: [
+          { name: 'page', in: 'query', schema: { type: 'integer', minimum: 1, default: 1 } },
+          { name: 'limit', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 50, default: 10 } },
+          { name: 'sort', in: 'query', schema: { type: 'string', enum: ['id', 'title', 'publicationDate'], default: 'id' } },
+          { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } }
+        ],
         responses: {
-          200: collectionResponse('Books returned', 'Book'),
+          200: response('Books returned', 'BookList'),
+          400: errorResponse('Invalid pagination or sort parameter'),
           500: errorResponse('Unexpected server error')
         }
       },
@@ -164,6 +171,35 @@ const openapiDocument = {
           authorId: { type: 'string', example: 'a1' },
           title: { type: 'string', example: 'Pride and Prejudice' },
           publicationDate: { type: 'string', example: '1813-01-28' }
+        }
+      },
+      BookList: {
+        type: 'object',
+        required: ['data', 'query', 'pagination'],
+        properties: {
+          data: { type: 'array', items: { $ref: '#/components/schemas/Book' } },
+          query: { $ref: '#/components/schemas/BookQuery' },
+          pagination: { $ref: '#/components/schemas/Pagination' }
+        }
+      },
+      BookQuery: {
+        type: 'object',
+        required: ['sort', 'order'],
+        properties: {
+          sort: { type: 'string', enum: ['id', 'title', 'publicationDate'] },
+          order: { type: 'string', enum: ['asc', 'desc'] }
+        }
+      },
+      Pagination: {
+        type: 'object',
+        required: ['page', 'limit', 'totalItems', 'totalPages', 'hasNextPage', 'hasPreviousPage'],
+        properties: {
+          page: { type: 'integer' },
+          limit: { type: 'integer' },
+          totalItems: { type: 'integer' },
+          totalPages: { type: 'integer' },
+          hasNextPage: { type: 'boolean' },
+          hasPreviousPage: { type: 'boolean' }
         }
       },
       Error: {
