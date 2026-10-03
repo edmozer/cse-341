@@ -30,7 +30,7 @@ test('uses the same filter for paginated books and total count', async () => {
       return 11;
     }
   };
-  const filter = {};
+  const filter = { authorId: 'a1' };
 
   const result = await getBooks({
     filter,
