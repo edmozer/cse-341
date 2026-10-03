@@ -2,10 +2,84 @@ import { getAuthorById } from '../models/authors.js';
 import {
   createBook,
   deleteBook,
-  getAllBooks,
+  getBooks,
   getBookById,
   updateBook
 } from '../models/books.js';
+
+const DEFAULT_PAGE = 1;
+const DEFAULT_LIMIT = 10;
+const MAX_LIMIT = 50;
+const SORT_FIELDS = ['id', 'title', 'publicationDate'];
+
+const parsePositiveInteger = (value, field) => {
+  if (value === undefined) {
+    return null;
+  }
+
+  if (typeof value !== 'string' || !/^[1-9]\d*$/.test(value)) {
+    return `${field} must be a positive integer`;
+  }
+
+  const number = Number(value);
+  return Number.isSafeInteger(number)
+    ? number
+    : `${field} must be a positive integer`;
+};
+
+const parseBooksQuery = (query) => {
+  const page = parsePositiveInteger(query.page, 'page');
+  const limit = parsePositiveInteger(query.limit, 'limit');
+
+  if (typeof page === 'string' || typeof limit === 'string') {
+    return { error: page || limit };
+  }
+
+  const resolvedPage = page || DEFAULT_PAGE;
+  const resolvedLimit = limit || DEFAULT_LIMIT;
+  if (resolvedLimit > MAX_LIMIT) {
+    return { error: `limit must be at most ${MAX_LIMIT}` };
+  }
+
+  const sort = query.sort === undefined ? 'id' : query.sort;
+  if (typeof sort !== 'string' || !SORT_FIELDS.includes(sort)) {
+    return { error: `sort must be one of: ${SORT_FIELDS.join(', ')}` };
+  }
+
+  const order = query.order === undefined ? 'asc' : query.order;
+  if (typeof order !== 'string' || !['asc', 'desc'].includes(order)) {
+    return { error: 'order must be asc or desc' };
+  }
+
+  return {
+    value: {
+      page: resolvedPage,
+      limit: resolvedLimit,
+      sort,
+      order
+    }
+  };
+};
+
+const buildBooksResponse = ({ books, totalItems, query }) => {
+  const totalPages = Math.ceil(totalItems / query.limit);
+
+  return {
+    data: books,
+    query: {
+      sort: query.sort,
+      order: query.order
+    },
+    pagination: {
+      page: query.page,
+      limit: query.limit,
+      totalItems,
+      totalPages,
+      hasNextPage: query.page < totalPages,
+      hasPreviousPage: query.page > 1 && totalPages > 0
+    }
+  };
+};
 
 const validateBook = (book) => {
   if (!book || typeof book !== 'object') {
@@ -33,9 +107,26 @@ const authorExists = async (authorId) => {
 };
 
 const getBooksHandler = async (req, res) => {
+  const parsedQuery = parseBooksQuery(req.query);
+  if (parsedQuery.error) {
+    return res.status(400).json({ message: parsedQuery.error });
+  }
+
   try {
-    const books = await getAllBooks();
-    return res.status(200).json(books);
+    const { page, limit, sort, order } = parsedQuery.value;
+    const { books, totalItems } = await getBooks({
+      filter: {},
+      page,
+      limit,
+      sort,
+      order
+    });
+
+    return res.status(200).json(buildBooksResponse({
+      books,
+      totalItems,
+      query: { ...req.query, page, limit, sort, order }
+    }));
   } catch (error) {
     console.error('Could not retrieve books.', error.message);
     return res.status(500).json({ message: 'Internal server error' });
@@ -121,9 +212,11 @@ const deleteBookHandler = async (req, res) => {
 };
 
 export {
+  buildBooksResponse,
   createBookHandler,
   deleteBookHandler,
   getBookByIdHandler,
   getBooksHandler,
+  parseBooksQuery,
   updateBookHandler
 };
