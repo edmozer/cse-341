@@ -8,8 +8,8 @@ The API stores books and authors in MongoDB. Books reference authors through
 ## Routes
 
 - `GET /books`: returns a paginated list of books. Use `page`, `limit` (maximum 50),
-  `sort`, and `order` query parameters. Responses contain `data`, the applied
-  `query`, and `pagination` metadata.
+  `sort`, `order`, `q` (title search), and `authorId` query parameters. Responses
+  contain `data`, the applied `query`, and `pagination` metadata.
 - `GET /books/:id`: returns one book, `404` when it does not exist.
 - `POST /books`: creates a book with an existing author reference.
 - `PUT /books/:id`: replaces a book.

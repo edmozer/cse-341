@@ -102,11 +102,13 @@ const openapiDocument = {
           { name: 'page', in: 'query', schema: { type: 'integer', minimum: 1, default: 1 } },
           { name: 'limit', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 50, default: 10 } },
           { name: 'sort', in: 'query', schema: { type: 'string', enum: ['id', 'title', 'publicationDate'], default: 'id' } },
-          { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } }
+          { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
+          { name: 'q', in: 'query', schema: { type: 'string' }, description: 'Case-insensitive search in the book title' },
+          { name: 'authorId', in: 'query', schema: { type: 'string' }, description: 'Filter by author ID' }
         ],
         responses: {
           200: response('Books returned', 'BookList'),
-          400: errorResponse('Invalid pagination or sort parameter'),
+          400: errorResponse('Invalid pagination, search, filter, or sort parameter'),
           500: errorResponse('Unexpected server error')
         }
       },
@@ -184,8 +186,10 @@ const openapiDocument = {
       },
       BookQuery: {
         type: 'object',
-        required: ['sort', 'order'],
+        required: ['q', 'authorId', 'sort', 'order'],
         properties: {
+          q: { type: 'string', nullable: true },
+          authorId: { type: 'string', nullable: true },
           sort: { type: 'string', enum: ['id', 'title', 'publicationDate'] },
           order: { type: 'string', enum: ['asc', 'desc'] }
         }

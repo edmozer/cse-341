@@ -5,11 +5,31 @@ import { buildBooksResponse, parseBooksQuery } from './books.js';
 test('uses pagination defaults for a books query', () => {
   assert.deepEqual(parseBooksQuery({}), {
     value: {
+      filter: {},
       page: 1,
       limit: 10,
       sort: 'id',
       order: 'asc'
     }
+  });
+});
+
+test('builds a title search and author filter', () => {
+  const result = parseBooksQuery({
+    q: 'pride',
+    authorId: 'a1',
+    page: '2',
+    limit: '5',
+    sort: 'title',
+    order: 'desc'
+  });
+
+  assert.equal(result.value.page, 2);
+  assert.equal(result.value.limit, 5);
+  assert.deepEqual(result.value.filter.authorId, 'a1');
+  assert.deepEqual(result.value.filter.title, {
+    $regex: 'pride',
+    $options: 'i'
   });
 });
 
@@ -20,8 +40,19 @@ test('rejects invalid pagination and sorting values', () => {
   assert.equal(parseBooksQuery({ order: 'sideways' }).error, 'order must be asc or desc');
 });
 
+test('rejects empty search and filters', () => {
+  assert.equal(parseBooksQuery({ q: ' ' }).error, 'q must be a non-empty string');
+  assert.equal(parseBooksQuery({ authorId: '' }).error, 'authorId must be a non-empty string');
+});
+
+test('escapes regular expression characters in title searches', () => {
+  const result = parseBooksQuery({ q: 'C++' });
+
+  assert.equal(result.value.filter.title.$regex, 'C\\+\\+');
+});
+
 test('builds metadata for first, middle, last, and empty pages', () => {
-  const baseQuery = { limit: 10, sort: 'id', order: 'asc' };
+  const baseQuery = { q: undefined, authorId: undefined, limit: 10, sort: 'id', order: 'asc' };
   const response = (page, totalItems) => {return buildBooksResponse({
     books: [],
     totalItems,

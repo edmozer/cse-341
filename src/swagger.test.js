@@ -9,9 +9,11 @@ test('documents the W05 books query contract', () => {
   );
 
   assert.deepEqual(Object.keys(parameters).sort(), [
+    'authorId',
     'limit',
     'order',
     'page',
+    'q',
     'sort'
   ]);
   assert.equal(parameters.page.schema.minimum, 1);

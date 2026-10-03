@@ -12,6 +12,10 @@ const DEFAULT_LIMIT = 10;
 const MAX_LIMIT = 50;
 const SORT_FIELDS = ['id', 'title', 'publicationDate'];
 
+const escapeRegex = (value) => {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+};
+
 const parsePositiveInteger = (value, field) => {
   if (value === undefined) {
     return null;
@@ -51,8 +55,24 @@ const parseBooksQuery = (query) => {
     return { error: 'order must be asc or desc' };
   }
 
+  for (const field of ['q', 'authorId']) {
+    if (query[field] !== undefined &&
+      (typeof query[field] !== 'string' || query[field].trim() === '')) {
+      return { error: `${field} must be a non-empty string` };
+    }
+  }
+
+  const filter = {};
+  if (query.q) {
+    filter.title = { $regex: escapeRegex(query.q.trim()), $options: 'i' };
+  }
+  if (query.authorId) {
+    filter.authorId = query.authorId.trim();
+  }
+
   return {
     value: {
+      filter,
       page: resolvedPage,
       limit: resolvedLimit,
       sort,
@@ -67,6 +87,8 @@ const buildBooksResponse = ({ books, totalItems, query }) => {
   return {
     data: books,
     query: {
+      q: query.q ? query.q.trim() : null,
+      authorId: query.authorId ? query.authorId.trim() : null,
       sort: query.sort,
       order: query.order
     },
@@ -113,9 +135,9 @@ const getBooksHandler = async (req, res) => {
   }
 
   try {
-    const { page, limit, sort, order } = parsedQuery.value;
+    const { filter, page, limit, sort, order } = parsedQuery.value;
     const { books, totalItems } = await getBooks({
-      filter: {},
+      filter,
       page,
       limit,
       sort,
